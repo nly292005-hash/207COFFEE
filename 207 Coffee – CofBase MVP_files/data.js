@@ -84,64 +84,56 @@ const DB = {
     { id: 17, userId: 5, week: '2026-W25', day: 'Mon', shiftId: 'T', status: 'pending' },
   ],
 
-  // Attendance records
-  attendance: [
-    {
-      id: 1, userId: 4, date: '2026-06-02', shiftId: 'S',
-      checkIn: '06:52', checkOut: '12:35',
-      checkInType: 'gps', checkOutType: 'gps',
-      lateMinutes: 0, earlyMinutes: 0,
-      hoursWorked: 5.5, status: 'normal',
-      note: ''
-    },
-    {
-      id: 2, userId: 4, date: '2026-06-03', shiftId: 'C',
-      checkIn: '12:48', checkOut: '18:05',
-      checkInType: 'gps', checkOutType: 'gps',
-      lateMinutes: 18, earlyMinutes: 0,
-      hoursWorked: 4.5, status: 'late', // 18 min late -> -1h penalty
-      note: 'Đi muộn 18 phút'
-    },
-    {
-      id: 3, userId: 4, date: '2026-06-04', shiftId: 'S',
-      checkIn: '07:08', checkOut: null,
-      checkInType: 'gps', checkOutType: null,
-      lateMinutes: 8, earlyMinutes: 0,
-      hoursWorked: 0, status: 'flag',
-      note: 'Quên check-out'
-    },
-    {
-      id: 4, userId: 5, date: '2026-06-02', shiftId: 'C',
-      checkIn: '12:30', checkOut: '18:02',
-      checkInType: 'gps', checkOutType: 'gps',
-      lateMinutes: 0, earlyMinutes: 0,
-      hoursWorked: 5.5, status: 'normal', note: ''
-    },
-    {
-      id: 5, userId: 5, date: '2026-06-03', shiftId: 'T',
-      checkIn: '18:00', checkOut: '23:05',
-      checkInType: 'gps', checkOutType: 'gps',
-      lateMinutes: 0, earlyMinutes: 0,
-      hoursWorked: 5, status: 'normal', note: ''
-    },
-    {
-      id: 6, userId: 7, date: '2026-06-02', shiftId: 'S',
-      checkIn: null, checkOut: null,
-      checkInType: 'exception', checkOutType: null,
-      lateMinutes: 0, earlyMinutes: 0,
-      hoursWorked: 0, status: 'absent',
-      note: 'Vắng không phép'
-    },
-    // Manual exception check-in by leader
-    {
-      id: 7, userId: 7, date: '2026-06-03', shiftId: 'S',
-      checkIn: '07:05', checkOut: '12:35',
-      checkInType: 'exception', checkOutType: 'gps',
-      lateMinutes: 5, earlyMinutes: 0,
-      hoursWorked: 5.5, status: 'normal',
-      note: 'Check-in ngoại lệ: Điện thoại hết pin - Khoa duyệt'
-    }
-  ],
+  // TỰ ĐỘNG SINH DỮ LIỆU: Từ tháng 3 đến tháng 6 (mỗi tháng 10 ngày công)
+  attendance: (function() {
+    const records = [];
+    let recordId = 1;
+    const months = [3, 4, 5, 6]; // Tháng 3, 4, 5, 6 năm 2026
+    const employeeIds = [2, 3, 4, 5, 6, 7, 8]; // Danh sách ID nhân sự (trừ CEO)
+
+    months.forEach(month => {
+      // Mỗi tháng tạo 10 ngày làm việc (từ ngày 01 đến ngày 10)
+      for (let day = 1; day <= 10; day++) {
+        const monthStr = String(month).padStart(2, '0');
+        const dayStr = String(day).padStart(2, '0');
+        const dateStr = `2026-${monthStr}-${dayStr}`;
+
+        employeeIds.forEach(userId => {
+          // Tạo một ít ngẫu nhiên để bảng lương trông thực tế hơn
+          // VD: ID 4 thỉnh thoảng đi muộn, ID 7 thỉnh thoảng nghỉ ca
+          let isLate = (userId === 4 && day === 5) || (userId === 5 && day === 8);
+          let isAbsent = (userId === 7 && day === 3);
+
+          if (!isAbsent) {
+            records.push({
+              id: recordId++,
+              userId: userId,
+              date: dateStr,
+              shiftId: 'S',
+              checkIn: isLate ? '07:15' : '06:55',
+              checkOut: '12:30',
+              checkInType: 'gps',
+              checkOutType: 'gps',
+              lateMinutes: isLate ? 15 : 0,
+              earlyMinutes: 0,
+              hoursWorked: isLate ? 5.25 : 5.5,
+              status: isLate ? 'late' : 'normal',
+              note: isLate ? 'Kẹt xe' : ''
+            });
+          }
+        });
+      }
+    });
+
+    // Thêm một ca lỗi (flag) của Khoa (ID 2) vào hôm nay (08/06) để Test UI
+    records.push({
+      id: recordId++, userId: 2, date: '2026-06-08', shiftId: 'C',
+      checkIn: '12:25', checkOut: null, checkInType: 'gps', checkOutType: null,
+      lateMinutes: 0, earlyMinutes: 0, hoursWorked: 0, status: 'flag', note: 'Quên check-out'
+    });
+
+    return records;
+  })(),
 
   // Audit log for attendance edits
   attendanceLog: [
@@ -293,7 +285,7 @@ const DB = {
     }
   },
 
-  // Payroll month data (May 2026)
+  // Payroll month data (ĐÃ CẬP NHẬT để đồng bộ chuẩn 10 ngày = 55 giờ)
   payrollMonth: {
     month: 5,
     year: 2026,
@@ -304,57 +296,57 @@ const DB = {
     employees: [
       {
         userId: 4, name: 'Lê Văn Bình', position: 'Nhân viên',
-        standardHours: 110, workedHours: 105,
-        lateTimes: 3, lateMinutes: 47,
-        penalty: 60000, bonus: 100000,
+        standardHours: 55, workedHours: 54.75,
+        lateTimes: 1, lateMinutes: 15,
+        penalty: 20000, bonus: 50000,
         hourlyRate: 20000,
-        baseWage: 2100000,
-        netSalary: 2140000
+        baseWage: 1095000,
+        netSalary: 1125000
       },
       {
         userId: 5, name: 'Phạm Thị Mai', position: 'Nhân viên',
-        standardHours: 110, workedHours: 110,
-        lateTimes: 1, lateMinutes: 12,
-        penalty: 0, bonus: 200000,
+        standardHours: 55, workedHours: 54.75,
+        lateTimes: 1, lateMinutes: 15,
+        penalty: 20000, bonus: 100000,
         hourlyRate: 20000,
-        baseWage: 2200000,
-        netSalary: 2400000
+        baseWage: 1095000,
+        netSalary: 1175000
       },
       {
         userId: 7, name: 'Nguyễn Thị Hoa', position: 'Nhân viên',
-        standardHours: 88, workedHours: 80,
-        lateTimes: 2, lateMinutes: 38,
-        penalty: 38000, bonus: 0,
+        standardHours: 55, workedHours: 49.5, // Vắng 1 ngày
+        lateTimes: 0, lateMinutes: 0,
+        penalty: 0, bonus: 0,
         hourlyRate: 19000,
-        baseWage: 1520000,
-        netSalary: 1482000
+        baseWage: 940500,
+        netSalary: 940500
       },
       {
         userId: 6, name: 'Hoàng Đức Tùng', position: 'Nhân viên',
-        standardHours: 100, workedHours: 98,
+        standardHours: 55, workedHours: 55,
         lateTimes: 0, lateMinutes: 0,
         penalty: 0, bonus: 150000,
         hourlyRate: 18000,
-        baseWage: 1764000,
-        netSalary: 1914000
+        baseWage: 990000,
+        netSalary: 1140000
       },
       {
         userId: 2, name: 'Nguyễn Minh Khoa', position: 'Trưởng ca',
-        standardHours: 120, workedHours: 120,
+        standardHours: 55, workedHours: 55,
         lateTimes: 0, lateMinutes: 0,
         penalty: 0, bonus: 500000,
         hourlyRate: 25000,
-        baseWage: 3000000,
-        netSalary: 3500000
+        baseWage: 1375000,
+        netSalary: 1875000
       },
       {
         userId: 8, name: 'Vũ Quang Hùng', position: 'Trưởng ca',
-        standardHours: 120, workedHours: 118,
-        lateTimes: 1, lateMinutes: 16,
-        penalty: 24000, bonus: 400000,
+        standardHours: 55, workedHours: 55,
+        lateTimes: 0, lateMinutes: 0,
+        penalty: 0, bonus: 400000,
         hourlyRate: 24000,
-        baseWage: 2832000,
-        netSalary: 3208000
+        baseWage: 1320000,
+        netSalary: 1720000
       }
     ]
   },

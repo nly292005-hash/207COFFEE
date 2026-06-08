@@ -14,11 +14,14 @@ const ReportsModule = {
     { name: 'Đường', status: 'ok' },
     { name: 'Ly nhựa', status: 'ok' },
   ],
+  
+  // STATE LƯU TRỮ BỘ LỌC LỊCH SỬ
+  _historyFilterType: 'this_month', 
+  _historyFilterDate: '2026-06-08', 
 
   renderDayReport() {
     const todayRev = Utils.getTodayRevenue();
     const systemCash = todayRev.cash;
-    // Đồng bộ với ngày hiện tại của năm 2026
     const todayOrders = DB.orders.filter(order => order.date === '2026-06-08');
 
     return `
@@ -41,7 +44,6 @@ const ReportsModule = {
     </div>
 
     <div class="mobile-responsive-grid">
-
       <div>
         <div class="card">
           <div class="card-header">
@@ -105,7 +107,6 @@ const ReportsModule = {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:16px">
-
         <div class="card">
           <div class="card-header">
             <span class="card-title">Đánh giá khách hàng</span>
@@ -168,15 +169,11 @@ const ReportsModule = {
   },
 
   bindDayReport() {
-    window.ReportsModule = this;
-
-    // Lắng nghe sự kiện tính chênh lệch tiền mặt
     const cashActualEl = document.getElementById('cash-actual');
     if (cashActualEl) {
       cashActualEl.addEventListener('input', () => this.calcDiff());
     }
 
-    // Lắng nghe sự kiện đánh giá sao
     document.querySelectorAll('.js-star-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const star = parseInt(e.currentTarget.getAttribute('data-star'), 10);
@@ -184,7 +181,6 @@ const ReportsModule = {
       });
     });
 
-    // Lắng nghe sự kiện cập nhật trạng thái nguyên liệu
     document.querySelectorAll('.js-ingredient-select').forEach(selectEl => {
       selectEl.addEventListener('change', (e) => {
         const index = parseInt(e.currentTarget.getAttribute('data-index'), 10);
@@ -192,7 +188,6 @@ const ReportsModule = {
       });
     });
 
-    // Lắng nghe sự kiện Chốt ca
     const submitBtn = document.getElementById('btn-submit-report');
     if (submitBtn) {
       submitBtn.addEventListener('click', () => this.submitReport());
@@ -241,7 +236,6 @@ const ReportsModule = {
     const incidents = document.getElementById('shift-incidents')?.value?.trim() || '';
     const ratingNote = document.getElementById('rating-note')?.value?.trim() || '';
 
-    // Validate
     if (isNaN(cashActual)) {
       Toast.show('Vui lòng nhập tiền mặt thực tế', 'danger');
       document.getElementById('cash-actual')?.classList.add('error');
@@ -255,7 +249,6 @@ const ReportsModule = {
       return;
     }
 
-    // Show confirmation modal
     const todayRev = Utils.getTodayRevenue();
     Modal.show(`
       <div class="modal-header">
@@ -284,7 +277,6 @@ const ReportsModule = {
       </div>
     `);
 
-    // Gắn sự kiện cho các nút trong Modal
     document.getElementById('btn-modal-close-x')?.addEventListener('click', () => Modal.close());
     document.getElementById('btn-modal-cancel')?.addEventListener('click', () => Modal.close());
     document.getElementById('btn-modal-confirm-submit')?.addEventListener('click', () => {
@@ -294,10 +286,8 @@ const ReportsModule = {
 
   confirmSubmit(cashActual, diff, diffReason, incidents, ratingNote) {
     Modal.close();
-
     const todayRev = Utils.getTodayRevenue();
 
-    // Save report (cập nhật ngày chốt chuẩn 2026)
     DB.dayReports.unshift({
       id: DB.nextId(DB.dayReports),
       date: '2026-06-08',
@@ -318,29 +308,103 @@ const ReportsModule = {
     });
 
     Toast.show('Ca đã được chốt! Thông báo đã gửi đến CEO.', 'success');
-    setTimeout(() => App.navTo('report-history'), 1000);
+    
+    if (typeof App !== 'undefined' && App.renderView) {
+      setTimeout(() => App.renderView('report-history'), 1000);
+    }
   },
 
+  // ============================================================
+  // CÁC HÀM XỬ LÝ LỌC LỊCH SỬ TỰ ĐỘNG CẬP NHẬT GIAO DIỆN
+  // ============================================================
+  setHistoryFilter(type) {
+    this._historyFilterType = type;
+    this.refreshHistoryList();
+  },
+
+  onDateChange(dateValue) {
+    this._historyFilterType = 'date';
+    this._historyFilterDate = dateValue;
+    this.refreshHistoryList();
+  },
+
+  // Hàm tự động nhúng lại HTML vào khung mà không cần load trang
+  refreshHistoryList() {
+    const container = document.getElementById('report-history-container');
+    if (container) {
+      container.innerHTML = this.renderHistoryContent();
+    } else if (typeof App !== 'undefined' && App.renderView) {
+      App.renderView('report-history');
+    }
+  },
+
+  // Hàm khởi tạo khung bên ngoài
   renderHistory() {
     return `
     <div class="page-header">
       <h1 class="page-title">Lịch sử báo cáo chốt ca</h1>
     </div>
+    <div id="report-history-container">
+      ${this.renderHistoryContent()}
+    </div>
+    `;
+  },
 
-    <div class="filter-row">
-      <select class="form-control" style="width:160px">
-        <option>Tháng này</option>
-        <option>Tháng trước</option>
-        <option>3 tháng</option>
-      </select>
-      <div class="search-box" style="flex:1;max-width:280px">
-        <span class="material-icons">search</span>
-        <input type="text" class="form-control" placeholder="Tìm theo ngày...">
-      </div>
+  // Hàm in ra các nút và danh sách báo cáo
+  renderHistoryContent() {
+    const currentDate = new Date('2026-06-08'); 
+    let filteredReports = DB.dayReports || [];
+
+    // Lọc theo điều kiện
+    if (this._historyFilterType === 'this_month') {
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+      filteredReports = filteredReports.filter(r => {
+        const d = new Date(r.date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      });
+    } 
+    else if (this._historyFilterType === 'last_month') {
+      let lastMonth = currentDate.getMonth() - 1;
+      let year = currentDate.getFullYear();
+      if (lastMonth < 0) { lastMonth = 11; year--; }
+      filteredReports = filteredReports.filter(r => {
+        const d = new Date(r.date);
+        return d.getMonth() === lastMonth && d.getFullYear() === year;
+      });
+    } 
+    else if (this._historyFilterType === '3_months') {
+      const threeMonthsAgo = new Date(currentDate);
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      filteredReports = filteredReports.filter(r => {
+        const d = new Date(r.date);
+        return d >= threeMonthsAgo && d <= currentDate;
+      });
+    } 
+    else if (this._historyFilterType === 'date' && this._historyFilterDate) {
+      filteredReports = filteredReports.filter(r => r.date === this._historyFilterDate);
+    }
+
+    filteredReports.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return `
+    <div class="filter-row mb-3" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding-bottom: 12px;">
+      <input type="date" class="form-control" style="width:140px; height: 38px;" 
+             value="${this._historyFilterDate}" 
+             onchange="ReportsModule.onDateChange(this.value)">
+      
+      <button class="btn ${this._historyFilterType === 'this_month' ? 'btn-primary' : 'btn-secondary'}" 
+              onclick="ReportsModule.setHistoryFilter('this_month')">Tháng này</button>
+      <button class="btn ${this._historyFilterType === 'last_month' ? 'btn-primary' : 'btn-secondary'}" 
+              onclick="ReportsModule.setHistoryFilter('last_month')">Tháng trước</button>
+      <button class="btn ${this._historyFilterType === '3_months' ? 'btn-primary' : 'btn-secondary'}" 
+              onclick="ReportsModule.setHistoryFilter('3_months')">3 tháng trước</button>
+      <button class="btn ${this._historyFilterType === 'all' ? 'btn-primary' : 'btn-secondary'}" 
+              onclick="ReportsModule.setHistoryFilter('all')">Tất cả</button>
     </div>
 
     <div style="display:flex;flex-direction:column;gap:12px">
-      ${DB.dayReports.map(report => {
+      ${filteredReports.map(report => {
         const leader = Utils.getUserById(report.leaderId);
         const lowIngredients = report.ingredients?.filter(ingredient => ingredient.status !== 'ok') || [];
         return `
@@ -399,13 +463,15 @@ const ReportsModule = {
         `;
       }).join('')}
 
-      ${DB.dayReports.length === 0 ? `
+      ${filteredReports.length === 0 ? `
         <div style="text-align:center;padding:60px;color:var(--text-muted)">
           <span class="material-icons" style="font-size:48px;display:block;margin-bottom:12px">description</span>
-          Chưa có báo cáo nào được chốt
+          Không có báo cáo nào trong khoảng thời gian này
         </div>
       ` : ''}
     </div>
     `;
   }
 };
+
+window.ReportsModule = ReportsModule;

@@ -297,9 +297,51 @@ const AttendanceModule = {
 
   renderHistory() {
     const user = DB.session;
-    const records = DB.attendance
-      .filter(record => record.userId === user.id)
-      .sort((a, b) => b.date.localeCompare(a.date));
+    let records = DB.attendance
+.filter(record => record.userId === user.id);
+
+const selectedDate =
+document.getElementById(
+'attendance-search-date'
+)?.value;
+
+const selectedMonth =
+document.getElementById(
+'attendance-month-filter'
+)?.value || 'current';
+
+if(selectedDate){
+
+records=
+records.filter(
+r=>r.date===selectedDate
+);
+
+}
+
+if(selectedMonth==='current'){
+
+const now=new Date();
+
+records=
+records.filter(r=>{
+
+const d=new Date(r.date);
+
+return(
+d.getMonth()===now.getMonth()
+&&
+d.getFullYear()===now.getFullYear()
+);
+
+});
+
+}
+
+records.sort(
+(a,b)=>
+b.date.localeCompare(a.date)
+);
 
     const getStatusBadge = (record) => {
       if (record.status === 'absent') return '<span class="badge badge-danger">Vắng</span>';

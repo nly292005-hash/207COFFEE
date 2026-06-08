@@ -31,9 +31,9 @@ const PayrollModule = {
         <option value="leader">Trưởng ca</option>
         <option value="accountant">Kế toán</option>
       </select>
-      <select class="form-control" style="width:160px">
+      <select class="form-control" style="width:160px" id="filter-branch">
         <option value="all">Tất cả cơ sở</option>
-        ${DB.branches.map(branch => `<option value="${branch.id}">${branch.name}</option>`).join('')}
+        ${DB.branches ? DB.branches.map(branch => `<option value="${branch.id}">${branch.name}</option>`).join('') : '<option value="CS1">CS1</option><option value="CS2">CS2</option>'}
       </select>
     </div>
 
@@ -57,7 +57,7 @@ const PayrollModule = {
 
     <div class="alert alert-info mt-3">
       <span class="material-icons">info</span>
-      <span>Mức lương được tính theo giờ. Tối đa <b>25.000đ/giờ</b>. Khi nhập vượt mức, hệ thống sẽ cảnh báo nhưng vẫn cho lưu nếu CEO xác nhận.</span>
+      <span>Mức lương được tính theo giờ. Tối đa <b>25.000đ/giờ</b>. Khi nhập vượt mức, hệ thống sẽ báo lỗi và <b>không cho phép lưu</b>.</span>
     </div>
     `;
   },
@@ -65,7 +65,7 @@ const PayrollModule = {
   renderSalaryRow(employee) {
     const positionLabel = { employee: 'Nhân viên', leader: 'Trưởng ca', accountant: 'Kế toán', ceo: 'CEO' };
     return `
-    <tr id="salary-row-${employee.id}">
+    <tr id="salary-row-${employee.id}" data-role="${employee.role}" data-branch="${employee.branch}">
       <td>
         <div style="display:flex;align-items:center;gap:8px">
           <div style="width:32px;height:32px;border-radius:50%;background:${Utils.avatarColor(employee.id)};display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0">
@@ -91,7 +91,7 @@ const PayrollModule = {
           </div>
           <div id="salary-warning-${employee.id}" class="salary-warning">
             <span class="material-icons" style="font-size:16px;color:var(--warning)">warning</span>
-            Mức lương vượt quá khung quy định của quán (25.000đ/h)
+            Mức lương vượt quá quy định! (Tối đa 25.000đ)
           </div>
         </div>
       </td>
@@ -113,12 +113,17 @@ const PayrollModule = {
   bindSalarySetup() {
     const searchInput = document.getElementById('salary-search');
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => this.filterEmployees(e.target.value));
+      searchInput.addEventListener('input', () => this.applyFilters());
     }
 
     const roleSelect = document.getElementById('filter-role');
     if (roleSelect) {
-      roleSelect.addEventListener('change', (e) => this.filterRole(e.target.value));
+      roleSelect.addEventListener('change', () => this.applyFilters());
+    }
+
+    const branchSelect = document.getElementById('filter-branch');
+    if (branchSelect) {
+      branchSelect.addEventListener('change', () => this.applyFilters());
     }
 
     document.querySelectorAll('.input-rate').forEach(input => {
@@ -162,22 +167,20 @@ const PayrollModule = {
     const value = parseFloat(input.value);
     const user = DB.users.find(u => u.id === userId);
 
+    // XỬ LÝ YÊU CẦU: CHẶN LƯU NẾU LƯƠNG LỚN HƠN 25000
     if (value > 25000) {
-      Modal.confirm(
-        'Cảnh báo: Vượt khung lương',
-        `Mức lương <b>${value.toLocaleString('vi-VN')}đ/h</b> vượt quá khung quy định 25.000đ/h.<br><br>CEO có chắc chắn muốn lưu mức lương này không?`,
-        () => {
-          if (user) user.hourlyRate = value;
-          Toast.show(`Đã cập nhật lương của ${user?.name}: ${value.toLocaleString('vi-VN')}đ/h`, 'success');
-          document.getElementById(`salary-warning-${userId}`)?.classList.remove('show');
-          document.getElementById(`rate-${userId}`)?.classList.remove('error');
-        },
-        null, 'Xác nhận lưu', 'btn-warning'
-      );
-    } else {
-      if (user) user.hourlyRate = value;
-      Toast.show(`Đã cập nhật lương của ${user?.name}: ${value.toLocaleString('vi-VN')}đ/h`, 'success');
+      Toast.show('Lỗi: Mức lương tối đa không được vượt quá 25.000đ/giờ!', 'danger');
+      input.value = 25000; // Tự động trả về mức trần
+      input.classList.add('error');
+      document.getElementById(`salary-warning-${userId}`)?.classList.add('show');
+      return; // Cắt luồng chạy, không cho lưu dữ liệu xuống
     }
+
+    // Nếu thỏa mãn <= 25000 thì lưu bình thường
+    if (user) user.hourlyRate = value;
+    Toast.show(`Đã cập nhật lương của ${user?.name}: ${value.toLocaleString('vi-VN')}đ/h`, 'success');
+    document.getElementById(`salary-warning-${userId}`)?.classList.remove('show');
+    input?.classList.remove('error');
   },
 
   cancelEdit(userId) {
@@ -188,16 +191,30 @@ const PayrollModule = {
     input?.classList.remove('error');
   },
 
-  filterEmployees(query) {
+  // XỬ LÝ YÊU CẦU: HÀM LỌC CHUNG CHO CẢ TÊN, CHỨC VỤ VÀ CƠ SỞ
+  applyFilters() {
+    const query = (document.getElementById('salary-search')?.value || '').toLowerCase();
+    const roleFilter = document.getElementById('filter-role')?.value || '';
+    const branchFilter = document.getElementById('filter-branch')?.value || 'all';
+
     const rows = document.querySelectorAll('#salary-tbody tr');
+    
     rows.forEach(row => {
       const name = row.querySelector('.table-name')?.textContent?.toLowerCase() || '';
-      row.style.display = name.includes(query.toLowerCase()) ? '' : 'none';
-    });
-  },
+      const rowRole = row.getAttribute('data-role');
+      const rowBranch = row.getAttribute('data-branch');
 
-  filterRole(role) {
-    Toast.show(role ? `Lọc theo: ${role}` : 'Hiển thị tất cả', 'success');
+      const matchQuery = name.includes(query);
+      const matchRole = (roleFilter === '' || rowRole === roleFilter);
+      // 'all' ở branch Filter nghĩa là xem tất cả, rowBranch 'all' nghĩa là nv quản lý toàn hệ thống (như kế toán, ceo)
+      const matchBranch = (branchFilter === 'all' || rowBranch === 'all' || rowBranch === branchFilter);
+
+      if (matchQuery && matchRole && matchBranch) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
   },
 
   // ============================================================
