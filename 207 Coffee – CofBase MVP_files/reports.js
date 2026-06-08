@@ -40,7 +40,7 @@ const ReportsModule = {
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px">
+    <div class="mobile-responsive-grid">
 
       <div>
         <div class="card">

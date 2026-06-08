@@ -2162,3 +2162,43 @@ background: var(--border);
 ::-webkit-scrollbar-thumb:hover {
 background: var(--text-muted);
 }
+@media (max-width: 768px) {
+  /* Ẩn thanh menu bên trái trên điện thoại */
+  .sidebar {
+    display: none; 
+  }
+
+  /* Kéo vùng nội dung tràn ra hết màn hình, xóa khoảng trắng */
+  .main-content {
+    margin-left: 0 !important; 
+    width: 100% !important;
+    padding: 15px; 
+  }
+
+  /* Cho phép các bảng (như lịch làm việc, bảng lương) cuộn ngang thay vì bóp méo */
+  .table-wrapper, .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+/* ============================================================
+   CẤU HÌNH GRID TỰ ĐỘNG THÍCH ỨNG (RESPONSIVE GRID)
+   ============================================================ */
+
+/* Định nghĩa class cho màn hình máy tính (Mặc định chia làm 2 cột) */
+.mobile-responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Chia thành 2 cột bằng nhau */
+  gap: 20px;                      /* Khoảng cách giữa các cột/hàng */
+  max-width: 900px;               /* Chiều rộng tối đa */
+  width: 100%;
+}
+
+/* Cấu hình ghi đè giao diện khi xem bằng điện thoại (Màn hình nhỏ hơn hoặc bằng 768px) */
+@media (max-width: 768px) {
+  .mobile-responsive-grid {
+    grid-template-columns: 1fr;   /* Chuyển hoàn toàn thành 1 cột */
+    gap: 15px;                    /* Thu nhỏ khoảng cách lại một chút cho cân đối */
+  }
+}

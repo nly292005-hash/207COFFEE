@@ -133,7 +133,6 @@ const Modal = {
 // ── MAIN APP ────────────────────────────────────────────────
 const App = {
   init() {
-    // Build base DOM
     document.getElementById('root').innerHTML = `
       <div id="app">
         <div id="main-area"></div>
@@ -145,14 +144,11 @@ const App = {
 
   render(view, params = {}) {
     const area = document.getElementById('main-area');
-
     const isAuthPage = ['login', 'change-password', 'forgot-password'].includes(view);
 
-    // If logged in, use layout
     if (DB.session && !isAuthPage) {
       this.renderWithLayout(view, params, area);
     } else {
-      // Auth pages — full screen
       if (view === 'login') {
         area.innerHTML = AuthModule.renderLogin();
       } else if (view === 'change-password') {
@@ -176,6 +172,8 @@ const App = {
 
     area.innerHTML = `
       <div id="app">
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
         <aside class="sidebar" id="sidebar">
           <div class="sidebar-brand">
             <div class="brand-logo">☕</div>
@@ -212,17 +210,23 @@ const App = {
 
         <main class="main-content">
           <header class="topbar">
-            <div class="topbar-title" id="topbar-title">${this.getViewTitle(view)}</div>
+            <div style="display:flex; align-items:center; gap: 12px;">
+              <button id="mobile-menu-btn" class="mobile-menu-btn" style="background:none; border:none; cursor:pointer; display:none; padding: 4px;">
+                <span class="material-icons" style="font-size:26px;">menu</span>
+              </button>
+              <div class="topbar-title" id="topbar-title">${this.getViewTitle(view)}</div>
+            </div>
+
             <div class="topbar-actions">
               ${isManager ? `
-                <span style="font-size:12px;color:var(--text-muted)">
+                <span style="font-size:12px;color:var(--text-muted)" class="hide-on-mobile">
                   <span class="material-icons" style="font-size:14px;vertical-align:-2px">schedule</span>
                   ${currentDate}
                 </span>
               ` : ''}
               <div class="topbar-user">
                 <div class="topbar-avatar">${Utils.getInitials(user.name)}</div>
-                ${user.name}
+                <span class="hide-on-mobile">${user.name}</span>
               </div>
             </div>
           </header>
@@ -232,7 +236,6 @@ const App = {
             </div>
           </div>
         </main>
-        <div id="toast-container" class="toast-container"></div>
       </div>
     `;
 
@@ -241,12 +244,34 @@ const App = {
       btn.addEventListener('click', (e) => {
         const targetView = e.currentTarget.getAttribute('data-view');
         if (targetView) this.navTo(targetView);
+        
+        // --- ĐÃ THÊM CHO MOBILE: Đóng sidebar sau khi bấm chuyển trang ---
+        document.getElementById('sidebar').classList.remove('mobile-open');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (overlay) overlay.classList.remove('show');
       });
     });
 
     document.getElementById('btn-logout').addEventListener('click', () => {
       this.logout();
     });
+
+    // --- ĐÃ THÊM CHO MOBILE: Logic bấm nút mở/đóng Menu ---
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (mobileBtn && sidebar && overlay) {
+      mobileBtn.addEventListener('click', () => {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('show');
+      });
+
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('show');
+      });
+    }
 
     // Render view content asynchronously
     setTimeout(() => this.renderView(view, params), 50);
@@ -331,7 +356,6 @@ const App = {
   },
 
   navTo(view) {
-    // Update active nav
     document.querySelectorAll('.nav-item').forEach(el => {
       if (el.dataset.view === view) {
         el.classList.add('active');
@@ -518,7 +542,7 @@ const AuthModule = {
 
         <div style="margin-top:20px;padding:12px;background:#FFF8E1;border-radius:8px;border:1px solid #FFE082">
           <p style="font-size:12px;color:#E65100;font-weight:600;margin-bottom:6px">Demo tài khoản:</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          <div class="demo-accounts-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
             ${demoAccounts.map(account => `
               <div class="demo-account-card" data-username="${account.username}"
                 style="cursor:pointer;padding:6px 8px;background:white;border-radius:4px;border:1px solid #EBEBEB;font-size:11px;">
@@ -682,7 +706,6 @@ const AuthModule = {
         });
       }
 
-      // Bind demo accounts click
       document.querySelectorAll('.demo-account-card').forEach(card => {
         card.addEventListener('click', (e) => {
           const username = e.currentTarget.getAttribute('data-username');
@@ -796,7 +819,6 @@ const AuthModule = {
       return;
     }
 
-    // Check if default password and first login
     if (userRecord.defaultPw) {
       DB.session = userRecord;
       App.render('change-password', { user: userRecord, isFirst: true });
@@ -862,7 +884,6 @@ const AuthModule = {
 
     if (!isValid) return;
 
-    // Update password in "Database"
     const dbUser = DB.users.find(u => u.id === userRecord.id);
     if (dbUser) { 
       dbUser.password = newPw; 
