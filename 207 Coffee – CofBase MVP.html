@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>207 Coffee – CofBase MVP</title>
+  <meta name="description" content="Hệ thống quản lý nội bộ 207 Coffee – Chấm công, Ca làm việc, Lương, POS, Dashboard">
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./207 Coffee – CofBase MVP_files/styles.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;%E2%98%95&lt;/text&gt;&lt;/svg&gt;">
+
+  <!-- Chart.js -->
+  <script src="./207 Coffee – CofBase MVP_files/chart.umd.min.js"></script>
+
+  <style>
+    /* Additional polish */
+    .pos-layout { height: calc(100vh - 108px); }
+    .page-content:has(.pos-layout) { padding: 16px; }
+
+    /* Smooth page transitions */
+    #page-content { animation: fadeIn 0.25s ease; }
+
+    /* Override chart canvas */
+    #revenue-chart { max-height: 240px; }
+
+    /* Tab switch helper */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Refactored inline styles */
+    .forgot-pw-wrapper { text-align: right; margin-bottom: 20px; }
+    .forgot-pw-link { font-size: 13px; color: var(--brown); text-decoration: none; font-weight: 500; }
+    .demo-section { margin-top: 20px; padding: 12px; background: #FFF8E1; border-radius: 8px; border: 1px solid #FFE082; }
+    .demo-title { font-size: 12px; color: #E65100; font-weight: 600; margin-bottom: 6px; }
+    .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .demo-card { cursor: pointer; padding: 6px 8px; background: white; border-radius: 4px; border: 1px solid #EBEBEB; font-size: 11px; transition: background 0.2s; }
+    .demo-card:hover { background: #f9f9f9; }
+    .demo-role { color: var(--text-muted); }
+    .demo-footer { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div id="app">
+      <div id="main-area">
+        <div class="auth-page">
+          <div class="auth-card">
+            <div class="auth-logo">
+              <div class="auth-logo-icon">☕</div>
+              <div class="auth-logo-text">
+                <h1>207 Coffee</h1>
+                <p>CofBase MVP System</p>
+              </div>
+            </div>
+            
+            <h2 class="auth-title">Đăng nhập hệ thống</h2>
+            <p class="auth-subtitle">Nhập tài khoản được cấp để tiếp tục</p>
+
+            <div id="login-alert" class="alert alert-danger hidden">
+              <span class="material-icons">error_outline</span>
+              <span id="login-alert-msg">Tên đăng nhập hoặc mật khẩu không đúng</span>
+            </div>
+
+            <form id="login-form" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="login-username">Tên đăng nhập <span class="required">*</span></label>
+                <div class="input-group">
+                  <input type="text" id="login-username" class="form-control" placeholder="VD: nv001, truongca1" autocomplete="username">
+                  <div class="input-group-btn"><span class="material-icons">person</span></div>
+                </div>
+                <div class="form-error" id="err-username">Vui lòng nhập tên đăng nhập</div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" for="login-password">Mật khẩu <span class="required">*</span></label>
+                <div class="input-group">
+                  <input type="password" id="login-password" class="form-control" placeholder="Nhập mật khẩu" autocomplete="current-password">
+                  <button type="button" class="input-group-btn" id="toggle-pw" tabindex="-1">
+                    <span class="material-icons" id="pw-icon">visibility_off</span>
+                  </button>
+                </div>
+                <div class="form-error" id="err-password">Vui lòng nhập mật khẩu</div>
+              </div>
+
+              <div class="forgot-pw-wrapper">
+                <a href="#" class="forgot-pw-link">Quên mật khẩu?</a>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">
+                Đăng nhập
+              </button>
+            </form>
+
+            <div class="demo-section">
+              <p class="demo-title">Demo tài khoản:</p>
+              <div class="demo-grid" id="demo-accounts">
+                <div class="demo-card" data-user="ceo" data-pass="207Coffee@123">
+                  <b>ceo</b> <span class="demo-role">CEO/Quản lý</span>
+                </div>
+                <div class="demo-card" data-user="truongca1" data-pass="207Coffee@123">
+                  <b>truongca1</b> <span class="demo-role">Trưởng ca</span>
+                </div>
+                <div class="demo-card" data-user="ketoan" data-pass="207Coffee@123">
+                  <b>ketoan</b> <span class="demo-role">Kế toán</span>
+                </div>
+                <div class="demo-card" data-user="nv001" data-pass="207Coffee@123">
+                  <b>nv001</b> <span class="demo-role">Nhân viên (đăng nhập lần đầu)</span>
+                </div>
+                <div class="demo-card" data-user="nv002" data-pass="207Coffee@123">
+                  <b>nv002</b> <span class="demo-role">Nhân viên</span>
+                </div>
+              </div>
+              <p class="demo-footer">Mật khẩu mặc định: <b>207Coffee@123</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="toast-container" class="toast-container"></div>
+    </div>
+  </div>
+
+  <!-- Core scripts -->
+  <script src="./207 Coffee – CofBase MVP_files/data.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/attendance.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/shifts.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/dashboard-leader.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/dashboard-ceo.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/payroll.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/pos.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/reports.js"></script>
+  <script src="./207 Coffee – CofBase MVP_files/app.js"></script>
+
+  <!-- Utility scripts -->
+  <script>
+    // Global tab switcher utility
+    function switchTab(activeTabId, activeBtnId) {
+      const activeTab = document.getElementById(activeTabId);
+      if (!activeTab) return;
+      
+      const parent = activeTab.parentElement;
+      const allTabs = parent.querySelectorAll('[id$="-tab"]');
+      allTabs.forEach(tab => {
+        tab.style.display = tab.id === activeTabId ? 'block' : 'none';
+      });
+      
+      const allBtns = document.querySelectorAll('.tab-btn');
+      allBtns.forEach(btn => btn.classList.remove('active'));
+      
+      allBtns.forEach(btn => {
+        const onclick = btn.getAttribute('onclick') || '';
+        if (onclick.includes(`'${activeTabId}'`)) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // Demo account auto-fill handler
+    document.addEventListener('DOMContentLoaded', () => {
+      const demoCards = document.querySelectorAll('.demo-card');
+      const usernameInput = document.getElementById('login-username');
+      const passwordInput = document.getElementById('login-password');
+
+      demoCards.forEach(card => {
+        card.addEventListener('click', () => {
+          if (usernameInput && passwordInput) {
+            usernameInput.value = card.getAttribute('data-user');
+            passwordInput.value = card.getAttribute('data-pass');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
