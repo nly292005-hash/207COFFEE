@@ -357,7 +357,8 @@ const ReportsModule = {
             </div>
           </div>
           <div class="card-body">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr) 1fr;gap:12px">
+            
+            <div class="history-responsive-grid">
               <div>
                 <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Tổng đơn</div>
                 <div style="font-weight:700;font-size:16px">${report.totalOrders}</div>
@@ -386,6 +387,7 @@ const ReportsModule = {
                 }
               </div>
             </div>
+
             ${report.incidents ? `
             <div class="alert alert-warning mt-3" style="margin-bottom:0;padding:8px 12px">
               <span class="material-icons" style="font-size:16px">report_problem</span>
