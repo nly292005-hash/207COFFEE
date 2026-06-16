@@ -9,6 +9,27 @@
 const MIN_PASSWORD_LENGTH = 8;
 const DEMO_OTP_CODE = '123456';
 
+// ── SCRIPT LOADER ──────────────────────────────────────────
+const ScriptLoader = {
+  loaded: new Set(),
+  load(url) {
+    if (this.loaded.has(url)) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = url;
+      script.async = true;
+      script.onload = () => {
+        this.loaded.add(url);
+        resolve();
+      };
+      script.onerror = () => {
+        reject(new Error(`Failed to load script: ${url}`));
+      };
+      document.body.appendChild(script);
+    });
+  }
+};
+
 // ── ROUTER ─────────────────────────────────────────────────
 const Router = {
   currentView: null,
@@ -143,6 +164,7 @@ const App = {
   },
 
   render(view, params = {}) {
+    Router.currentView = view;
     const area = document.getElementById('main-area');
     const isAuthPage = ['login', 'change-password', 'forgot-password'].includes(view);
 
@@ -277,7 +299,7 @@ const App = {
     setTimeout(() => this.renderView(view, params), 50);
   },
 
-  renderView(view, params) {
+  async renderView(view, params) {
     const content = document.getElementById('page-content');
     const title = document.getElementById('topbar-title');
     
@@ -288,65 +310,96 @@ const App = {
     let html = '';
     let bindFn = null;
 
-    switch (view) {
-      case 'employee-home':
-        html = AttendanceModule.renderEmployeeHome();
-        bindFn = () => AttendanceModule.bindEmployeeHome();
-        break;
-      case 'shift-register':
-        html = ShiftsModule.renderRegister();
-        bindFn = () => ShiftsModule.bindRegister();
-        break;
-      case 'attendance-history':
-        html = AttendanceModule.renderHistory();
-        bindFn = () => AttendanceModule.bindHistory();
-        break;
-      case 'leader-dashboard':
-        html = LeaderDashModule.render();
-        bindFn = () => LeaderDashModule.bind();
-        break;
-      case 'shift-schedule':
-        html = ShiftsModule.renderSchedule();
-        bindFn = () => ShiftsModule.bindSchedule();
-        break;
-      case 'shift-approve':
-        html = ShiftsModule.renderApprove();
-        bindFn = () => ShiftsModule.bindApprove();
-        break;
-      case 'exception-checkin':
-        html = AttendanceModule.renderException();
-        bindFn = () => AttendanceModule.bindException();
-        break;
-      case 'edit-attendance':
-        html = AttendanceModule.renderEdit();
-        bindFn = () => AttendanceModule.bindEdit();
-        break;
-      case 'ceo-dashboard':
-        html = CEODashModule.render();
-        bindFn = () => CEODashModule.bind();
-        break;
-      case 'salary-setup':
-        html = PayrollModule.renderSalarySetup();
-        bindFn = () => PayrollModule.bindSalarySetup();
-        break;
-      case 'payroll':
-        html = PayrollModule.renderPayroll();
-        bindFn = () => PayrollModule.bindPayroll();
-        break;
-      case 'pos':
-        html = POSModule.render();
-        bindFn = () => POSModule.bind();
-        break;
-      case 'day-report':
-        html = ReportsModule.renderDayReport();
-        bindFn = () => ReportsModule.bindDayReport();
-        break;
-      case 'report-history':
-        html = ReportsModule.renderHistory();
-        break;
-      default:
-        html = `<div class="card card-body"><p>Tính năng đang phát triển...</p></div>`;
+    try {
+      switch (view) {
+        case 'employee-home':
+          await ScriptLoader.load('./assets/attendance.js');
+          html = AttendanceModule.renderEmployeeHome();
+          bindFn = () => AttendanceModule.bindEmployeeHome();
+          break;
+        case 'shift-register':
+          await ScriptLoader.load('./assets/shifts.js');
+          html = ShiftsModule.renderRegister();
+          bindFn = () => ShiftsModule.bindRegister();
+          break;
+        case 'attendance-history':
+          await ScriptLoader.load('./assets/attendance.js');
+          html = AttendanceModule.renderHistory();
+          bindFn = () => AttendanceModule.bindHistory();
+          break;
+        case 'leader-dashboard':
+          await ScriptLoader.load('./assets/dashboard-leader.js');
+          html = LeaderDashModule.render();
+          bindFn = () => LeaderDashModule.bind();
+          break;
+        case 'shift-schedule':
+          await ScriptLoader.load('./assets/shifts.js');
+          html = ShiftsModule.renderSchedule();
+          bindFn = () => ShiftsModule.bindSchedule();
+          break;
+        case 'shift-approve':
+          await ScriptLoader.load('./assets/shifts.js');
+          html = ShiftsModule.renderApprove();
+          bindFn = () => ShiftsModule.bindApprove();
+          break;
+        case 'exception-checkin':
+          await ScriptLoader.load('./assets/attendance.js');
+          html = AttendanceModule.renderException();
+          bindFn = () => AttendanceModule.bindException();
+          break;
+        case 'edit-attendance':
+          await ScriptLoader.load('./assets/attendance.js');
+          html = AttendanceModule.renderEdit();
+          bindFn = () => AttendanceModule.bindEdit();
+          break;
+        case 'ceo-dashboard':
+          await ScriptLoader.load('./assets/chart.umd.min.js');
+          await ScriptLoader.load('./assets/dashboard-ceo.js');
+          html = CEODashModule.render();
+          bindFn = () => CEODashModule.bind();
+          break;
+        case 'salary-setup':
+          await ScriptLoader.load('./assets/payroll.js');
+          html = PayrollModule.renderSalarySetup();
+          bindFn = () => PayrollModule.bindSalarySetup();
+          break;
+        case 'payroll':
+          await ScriptLoader.load('./assets/payroll.js');
+          html = PayrollModule.renderPayroll();
+          bindFn = () => PayrollModule.bindPayroll();
+          break;
+        case 'pos':
+          await ScriptLoader.load('./assets/pos.js');
+          html = POSModule.render();
+          bindFn = () => POSModule.bind();
+          break;
+        case 'day-report':
+          await ScriptLoader.load('./assets/reports.js');
+          html = ReportsModule.renderDayReport();
+          bindFn = () => ReportsModule.bindDayReport();
+          break;
+        case 'report-history':
+          await ScriptLoader.load('./assets/reports.js');
+          html = ReportsModule.renderHistory();
+          break;
+        default:
+          html = `<div class="card card-body"><p>Tính năng đang phát triển...</p></div>`;
+      }
+    } catch (err) {
+      console.error(err);
+      html = `
+        <div class="card card-body text-center" style="padding:40px 20px;">
+          <span class="material-icons" style="font-size:48px;color:var(--danger);margin-bottom:12px;">error_outline</span>
+          <h3 style="color:var(--danger)">Lỗi tải tính năng</h3>
+          <p class="text-muted" style="margin-top:8px;font-size:14px;">Không thể tải các tệp tin cần thiết. Vui lòng kiểm tra lại kết nối mạng.</p>
+          <button class="btn btn-primary btn-sm mt-3" onclick="App.navTo('${view}')" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 4px;">
+            <span class="material-icons" style="font-size:16px;">refresh</span> Thử lại
+          </button>
+        </div>
+      `;
     }
+
+    if (Router.currentView !== view) return;
 
     if (content) {
       content.innerHTML = html;
@@ -357,6 +410,7 @@ const App = {
   },
 
   navTo(view) {
+    Router.currentView = view;
     document.querySelectorAll('.nav-item').forEach(el => {
       if (el.dataset.view === view) {
         el.classList.add('active');
@@ -371,8 +425,6 @@ const App = {
     if (title) {
       title.textContent = this.getViewTitle(view);
     }
-    
-    Router.currentView = view;
   },
 
   logout() {
