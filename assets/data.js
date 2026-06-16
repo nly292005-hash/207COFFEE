@@ -31,22 +31,22 @@ const DB = {
       position: 'Nhân viên', branch: 'CS1', hourlyRate: 20000, createdAt: '2024-03-01'
     },
     {
-      id: 5, username: 'nv002', password: 'NewPass@456', defaultPw: false,
+      id: 5, username: 'nv002', password: '207Coffee@123', defaultPw: false,
       name: 'Phạm Thị Mai', role: 'employee', email: 'mai@207coffee.vn', phone: '0945678901',
       position: 'Nhân viên', branch: 'CS1', hourlyRate: 20000, createdAt: '2024-03-15'
     },
     {
-      id: 6, username: 'nv003', password: 'NewPass@789', defaultPw: false,
+      id: 6, username: 'nv003', password: '207Coffee@123', defaultPw: true,
       name: 'Hoàng Đức Tùng', role: 'employee', email: 'tung@207coffee.vn', phone: '0956789012',
       position: 'Nhân viên', branch: 'CS2', hourlyRate: 18000, createdAt: '2024-04-01'
     },
     {
-      id: 7, username: 'nv004', password: 'NewPass@012', defaultPw: false,
+      id: 7, username: 'nv004', password: '207Coffee@123', defaultPw: true,
       name: 'Nguyễn Thị Hoa', role: 'employee', email: 'hoa@207coffee.vn', phone: '0967890123',
       position: 'Nhân viên', branch: 'CS1', hourlyRate: 19000, createdAt: '2024-04-10'
     },
     {
-      id: 8, username: 'truongca2', password: 'NewPass@333', defaultPw: false,
+      id: 8, username: 'truongca2', password: '207Coffee@123', defaultPw: true,
       name: 'Vũ Quang Hùng', role: 'leader', email: 'hung@207coffee.vn', phone: '0978901234',
       position: 'Trưởng ca', branch: 'CS2', hourlyRate: 24000, createdAt: '2024-02-01'
     }

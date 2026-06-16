@@ -299,6 +299,7 @@ const App = {
         break;
       case 'attendance-history':
         html = AttendanceModule.renderHistory();
+        bindFn = () => AttendanceModule.bindHistory();
         break;
       case 'leader-dashboard':
         html = LeaderDashModule.render();
@@ -957,4 +958,4 @@ const AuthModule = {
 };
 
 // ── INIT ─────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => App.init());
+window.addEventListener('DOMContentLoaded', () => App.init()); 

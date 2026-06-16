@@ -322,12 +322,13 @@ const AttendanceModule = {
       <div class="page-header-right">
         <div class="search-box">
           <span class="material-icons">search</span>
-          <input type="text" class="form-control" placeholder="Tìm theo ngày..." style="width:180px">
+          <input type="text" id="history-search-input" class="form-control" placeholder="Tìm theo ngày..." style="width:180px">
         </div>
-        <select class="form-control" style="width:140px">
-          <option>Tháng này</option>
-          <option>Tháng trước</option>
-          <option>3 tháng</option>
+        <select class="form-control" id="history-month-filter" style="width:140px">
+          <option value="all" selected>Tất cả</option>
+          <option value="Tháng này">Tháng này</option>
+          <option value="Tháng trước">Tháng trước</option>
+          <option value="3 tháng">3 tháng gần đây</option>
         </select>
       </div>
     </div>
@@ -335,19 +336,19 @@ const AttendanceModule = {
     <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
       <div class="stat-card">
         <div class="stat-icon green"><span class="material-icons">check_circle</span></div>
-        <div><div class="stat-label">Giờ làm</div><div class="stat-value">${totalHours}h</div></div>
+        <div><div class="stat-label">Giờ làm</div><div class="stat-value" id="stat-hours">${totalHours}h</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon yellow"><span class="material-icons">schedule</span></div>
-        <div><div class="stat-label">Đi muộn</div><div class="stat-value">${totalLate} lần</div></div>
+        <div><div class="stat-label">Đi muộn</div><div class="stat-value" id="stat-late">${totalLate} lần</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon red"><span class="material-icons">flag</span></div>
-        <div><div class="stat-label">Ngoại lệ</div><div class="stat-value">${totalFlagged}</div></div>
+        <div><div class="stat-label">Ngoại lệ</div><div class="stat-value" id="stat-flag">${totalFlagged}</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon brown"><span class="material-icons">work</span></div>
-        <div><div class="stat-label">Ca đã làm</div><div class="stat-value">${totalWorked}</div></div>
+        <div><div class="stat-label">Ca đã làm</div><div class="stat-value" id="stat-worked">${totalWorked}</div></div>
       </div>
     </div>
 
@@ -393,6 +394,125 @@ const AttendanceModule = {
       </table>
     </div>
     `;
+  },
+
+  bindHistory() {
+    const user = DB.session;
+    const allRecords = DB.attendance
+      .filter(record => record.userId === user.id)
+      .sort((a, b) => b.date.localeCompare(a.date));
+
+    const tbody = document.querySelector('.table-wrapper tbody');
+    if (!tbody) return;
+
+    const getStatusBadge = (record) => {
+      if (record.status === 'absent') return '<span class="badge badge-danger">Vắng</span>';
+      if (record.status === 'flag') return '<span class="flag-badge"><span class="material-icons" style="font-size:12px">flag</span>Thiếu checkout</span>';
+      if (record.status === 'late') return '<span class="badge badge-warning">Đi muộn</span>';
+      return '<span class="badge badge-success">Bình thường</span>';
+    };
+
+    const updateStats = (records) => {
+      const hours = document.getElementById('stat-hours');
+      const late = document.getElementById('stat-late');
+      const flag = document.getElementById('stat-flag');
+      const worked = document.getElementById('stat-worked');
+      if (hours) hours.textContent = records.reduce((s, r) => s + r.hoursWorked, 0) + 'h';
+      if (late) late.textContent = records.filter(r => r.lateMinutes > 0).length + ' lần';
+      if (flag) flag.textContent = records.filter(r => r.status === 'flag').length;
+      if (worked) worked.textContent = records.filter(r => r.status !== 'absent').length;
+    };
+
+    const renderRows = (records) => {
+      updateStats(records);
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px">Không có dữ liệu</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = records.map(record => {
+        const shift = Utils.getShiftById(record.shiftId);
+        const isManual = record.checkInType === 'exception'
+          ? '<span class="badge badge-blue" style="font-size:10px">Thủ công</span>' : '';
+        const penaltyHtml = record.lateMinutes >= 15 ? ' (−1h)' : '';
+        const lateColor = record.lateMinutes >= 15 ? 'var(--danger)' : 'var(--warning)';
+        const lateHtml = record.lateMinutes > 0
+          ? `<span style="color:${lateColor}">+${record.lateMinutes}'${penaltyHtml}</span>`
+          : '<span style="color:var(--success)">0</span>';
+
+        return `
+        <tr>
+          <td><span style="font-weight:600">${Utils.formatDate(record.date)}</span></td>
+          <td>${shift ? shift.name : record.shiftId}</td>
+          <td>${record.checkIn || '—'} ${isManual}</td>
+          <td style="${!record.checkOut ? 'color:var(--danger);font-weight:600' : ''}">${record.checkOut || '—'}</td>
+          <td>${lateHtml}</td>
+          <td><span style="font-weight:600">${record.hoursWorked}h</span></td>
+          <td>${getStatusBadge(record)}</td>
+          <td style="font-size:12px;color:var(--text-muted);max-width:180px">${record.note || '—'}</td>
+        </tr>`;
+      }).join('');
+    };
+
+    // Parse "YYYY-MM-DD" thủ công để tránh bug lệch timezone của new Date()
+    // (new Date("2026-06-01") trả về UTC midnight → khi dùng getMonth() ở VN UTC+7
+    //  vẫn đúng nhưng so sánh < cutoff có thể sai nếu cutoff cũng bị lệch)
+    const parseLocalDate = (dateStr) => {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      return { year: y, month: m - 1, day: d }; // month 0-based như JS
+    };
+
+    const applyFilters = () => {
+      const searchInput = document.getElementById('history-search-input');
+      const monthSelect = document.getElementById('history-month-filter');
+      const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      const monthVal = monthSelect ? monthSelect.value : 'all';
+
+      const now = new Date();
+      const nowYear = now.getFullYear();
+      const nowMonth = now.getMonth(); // 0-based
+
+      let filtered = allRecords.filter(record => {
+        const { year, month, day } = parseLocalDate(record.date);
+
+        if (monthVal === 'all') {
+          // Hiển thị tất cả, không lọc
+        } else if (monthVal === 'Tháng này') {
+          if (year !== nowYear || month !== nowMonth) return false;
+        } else if (monthVal === 'Tháng trước') {
+          const prevMonth = nowMonth === 0 ? 11 : nowMonth - 1;
+          const prevYear = nowMonth === 0 ? nowYear - 1 : nowYear;
+          if (year !== prevYear || month !== prevMonth) return false;
+        } else if (monthVal === '3 tháng') {
+          // So sánh bằng chuỗi YYYY-MM-DD (an toàn hơn Date object)
+          const cutoff = new Date(nowYear, nowMonth - 3, now.getDate());
+          const recordDate = new Date(year, month, day);
+          if (recordDate < cutoff) return false;
+        }
+
+        if (searchVal) {
+          const formatted = Utils.formatDate(record.date).toLowerCase();
+          const raw = record.date.toLowerCase();
+          if (!formatted.includes(searchVal) && !raw.includes(searchVal)) return false;
+        }
+
+        return true;
+      });
+
+      renderRows(filtered);
+    };
+
+    const searchInput = document.getElementById('history-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
+
+    const monthSelect = document.getElementById('history-month-filter');
+    if (monthSelect) {
+      monthSelect.addEventListener('change', applyFilters);
+    }
+
+    // Áp dụng filter ngay lần đầu
+    applyFilters();
   },
 
   renderException() {
