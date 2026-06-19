@@ -235,6 +235,7 @@ const DB = {
 
   // Day reports (end-of-day)
   dayReports: [
+    // ── Tháng 6/2026 ──
     {
       id: 1, date: '2026-06-04', shiftId: 'T', leaderId: 2,
       totalOrders: 47, systemRevenue: 4250000, cashSystem: 2100000,
@@ -264,7 +265,437 @@ const DB = {
         { name: 'Đường', status: 'ok' },
       ],
       status: 'locked', lockedAt: '2026-06-03 23:08'
-    }
+    },
+    {
+      id: 3, date: '2026-06-02', shiftId: 'S', leaderId: 8,
+      totalOrders: 38, systemRevenue: 3620000, cashSystem: 1800000,
+      cashActual: 1800000, cashDiff: 0, diffReason: '',
+      rating: 4.5, ratingNote: 'Ca sáng ổn định, khách đều',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'low' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-06-02 12:45'
+    },
+    {
+      id: 4, date: '2026-06-01', shiftId: 'C', leaderId: 2,
+      totalOrders: 44, systemRevenue: 4100000, cashSystem: 2050000,
+      cashActual: 2100000, cashDiff: 50000, diffReason: 'Khách trả thừa, chưa xác định được',
+      rating: 4.4, ratingNote: 'Chiều đông khách, phục vụ tốt',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'low' },
+      ],
+      status: 'locked', lockedAt: '2026-06-01 18:10'
+    },
+
+    // ── Tháng 5/2026 ──
+    {
+      id: 5, date: '2026-05-30', shiftId: 'T', leaderId: 8,
+      totalOrders: 55, systemRevenue: 5100000, cashSystem: 2550000,
+      cashActual: 2550000, cashDiff: 0, diffReason: '',
+      rating: 4.8, ratingNote: 'Ca tối đông khách, nhân viên phục vụ xuất sắc',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-05-30 23:05'
+    },
+    {
+      id: 6, date: '2026-05-28', shiftId: 'S', leaderId: 2,
+      totalOrders: 33, systemRevenue: 3100000, cashSystem: 1550000,
+      cashActual: 1500000, cashDiff: -50000, diffReason: 'Thiếu tiền lẻ đầu ca, sẽ bù ca sau',
+      rating: 4.1, ratingNote: 'Ca sáng ít khách do trời mưa',
+      incidents: 'Trời mưa lớn từ 8h-10h, lượng khách giảm',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'low' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-05-28 12:50'
+    },
+    {
+      id: 7, date: '2026-05-25', shiftId: 'C', leaderId: 8,
+      totalOrders: 49, systemRevenue: 4600000, cashSystem: 2300000,
+      cashActual: 2300000, cashDiff: 0, diffReason: '',
+      rating: 4.6, ratingNote: 'Cuối tuần đông, phục vụ nhanh',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'low' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-05-25 18:20'
+    },
+    {
+      id: 8, date: '2026-05-20', shiftId: 'T', leaderId: 2,
+      totalOrders: 41, systemRevenue: 3900000, cashSystem: 1950000,
+      cashActual: 1950000, cashDiff: 0, diffReason: '',
+      rating: 4.3, ratingNote: 'Ca bình thường, không có phản ánh',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-05-20 23:00'
+    },
+    {
+      id: 9, date: '2026-05-15', shiftId: 'S', leaderId: 8,
+      totalOrders: 36, systemRevenue: 3350000, cashSystem: 1675000,
+      cashActual: 1675000, cashDiff: 0, diffReason: '',
+      rating: 4.4, ratingNote: 'Ca sáng ổn, khách quen nhiều',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'low' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-05-15 12:40'
+    },
+    {
+      id: 10, date: '2026-05-10', shiftId: 'C', leaderId: 2,
+      totalOrders: 45, systemRevenue: 4200000, cashSystem: 2100000,
+      cashActual: 2050000, cashDiff: -50000, diffReason: 'Nhân viên mới thối nhầm',
+      rating: 4.2, ratingNote: 'Nhân viên mới cần thêm thời gian thích nghi',
+      incidents: 'Nhân viên thử việc lần đầu phục vụ độc lập',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'low' },
+      ],
+      status: 'locked', lockedAt: '2026-05-10 18:05'
+    },
+    {
+      id: 11, date: '2026-05-05', shiftId: 'T', leaderId: 8,
+      totalOrders: 58, systemRevenue: 5400000, cashSystem: 2700000,
+      cashActual: 2700000, cashDiff: 0, diffReason: '',
+      rating: 4.9, ratingNote: 'Ca tối 30/4 bù - đông khách kỷ lục, team rất cố gắng',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'low' },
+        { name: 'Sữa đặc', status: 'low' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-05-05 23:30'
+    },
+
+    // ── Tháng 4/2026 ──
+    {
+      id: 12, date: '2026-04-28', shiftId: 'S', leaderId: 2,
+      totalOrders: 40, systemRevenue: 3750000, cashSystem: 1875000,
+      cashActual: 1875000, cashDiff: 0, diffReason: '',
+      rating: 4.5, ratingNote: 'Ca sáng cuối tháng bình thường',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-04-28 12:35'
+    },
+    {
+      id: 13, date: '2026-04-20', shiftId: 'T', leaderId: 8,
+      totalOrders: 46, systemRevenue: 4300000, cashSystem: 2150000,
+      cashActual: 2150000, cashDiff: 0, diffReason: '',
+      rating: 4.5, ratingNote: 'Ổn định, không sự cố',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'low' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-04-20 23:10'
+    },
+    {
+      id: 14, date: '2026-04-15', shiftId: 'C', leaderId: 2,
+      totalOrders: 43, systemRevenue: 4050000, cashSystem: 2025000,
+      cashActual: 2025000, cashDiff: 0, diffReason: '',
+      rating: 4.3, ratingNote: 'Giữa tháng, lượng khách ổn',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-04-15 18:15'
+    },
+    {
+      id: 15, date: '2026-04-08', shiftId: 'S', leaderId: 8,
+      totalOrders: 35, systemRevenue: 3280000, cashSystem: 1640000,
+      cashActual: 1590000, cashDiff: -50000, diffReason: 'Mất 1 bill do máy in lỗi, đã ghi tay',
+      rating: 4.0, ratingNote: 'Máy in hóa đơn gặp sự cố đầu ca',
+      incidents: 'Máy in bill hỏng đầu ca, dùng bill tay 2 tiếng',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'low' },
+      ],
+      status: 'locked', lockedAt: '2026-04-08 12:55'
+    },
+    {
+      id: 16, date: '2026-04-02', shiftId: 'T', leaderId: 2,
+      totalOrders: 50, systemRevenue: 4700000, cashSystem: 2350000,
+      cashActual: 2350000, cashDiff: 0, diffReason: '',
+      rating: 4.6, ratingNote: 'Đầu tháng 4, khách đông hơn dự kiến',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-04-02 23:00'
+    },
+
+    // ── Tháng 3/2026 ──
+    {
+      id: 17, date: '2026-03-28', shiftId: 'C', leaderId: 8,
+      totalOrders: 42, systemRevenue: 3950000, cashSystem: 1975000,
+      cashActual: 1975000, cashDiff: 0, diffReason: '',
+      rating: 4.4, ratingNote: 'Cuối tháng 3 ổn định',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-03-28 18:20'
+    },
+    {
+      id: 18, date: '2026-03-20', shiftId: 'T', leaderId: 2,
+      totalOrders: 39, systemRevenue: 3650000, cashSystem: 1825000,
+      cashActual: 1825000, cashDiff: 0, diffReason: '',
+      rating: 4.2, ratingNote: 'Ca tối bình thường',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'low' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-03-20 23:05'
+    },
+    {
+      id: 19, date: '2026-03-14', shiftId: 'S', leaderId: 8,
+      totalOrders: 31, systemRevenue: 2900000, cashSystem: 1450000,
+      cashActual: 1450000, cashDiff: 0, diffReason: '',
+      rating: 4.1, ratingNote: 'Ca sáng weekday ít khách',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-03-14 12:30'
+    },
+    {
+      id: 20, date: '2026-03-08', shiftId: 'C', leaderId: 2,
+      totalOrders: 53, systemRevenue: 4950000, cashSystem: 2475000,
+      cashActual: 2475000, cashDiff: 0, diffReason: '',
+      rating: 4.7, ratingNote: '8/3 đông khách, team phục vụ tốt, có tặng hoa khách nữ',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'low' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-03-08 18:30'
+    },
+    {
+      id: 21, date: '2026-03-01', shiftId: 'T', leaderId: 8,
+      totalOrders: 44, systemRevenue: 4150000, cashSystem: 2075000,
+      cashActual: 2075000, cashDiff: 0, diffReason: '',
+      rating: 4.4, ratingNote: 'Đầu tháng 3 ổn',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-03-01 23:10'
+    },
+
+    // ── Tháng 2/2026 ──
+    {
+      id: 22, date: '2026-02-25', shiftId: 'S', leaderId: 2,
+      totalOrders: 29, systemRevenue: 2750000, cashSystem: 1375000,
+      cashActual: 1375000, cashDiff: 0, diffReason: '',
+      rating: 4.0, ratingNote: 'Sau Tết, khách chưa đông trở lại',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-02-25 12:45'
+    },
+    {
+      id: 23, date: '2026-02-18', shiftId: 'C', leaderId: 8,
+      totalOrders: 48, systemRevenue: 4500000, cashSystem: 2250000,
+      cashActual: 2250000, cashDiff: 0, diffReason: '',
+      rating: 4.6, ratingNote: 'Rằm tháng Giêng - khách đông bất ngờ',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'low' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-02-18 18:25'
+    },
+    {
+      id: 24, date: '2026-02-10', shiftId: 'T', leaderId: 2,
+      totalOrders: 56, systemRevenue: 5200000, cashSystem: 2600000,
+      cashActual: 2600000, cashDiff: 0, diffReason: '',
+      rating: 4.8, ratingNote: 'Mùng 1 Tết bù - đông khách, không khí tốt',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'low' },
+        { name: 'Sữa đặc', status: 'low' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-02-10 23:20'
+    },
+    {
+      id: 25, date: '2026-02-05', shiftId: 'S', leaderId: 8,
+      totalOrders: 27, systemRevenue: 2550000, cashSystem: 1275000,
+      cashActual: 1275000, cashDiff: 0, diffReason: '',
+      rating: 3.9, ratingNote: 'Gần Tết, nhiều nhân viên xin nghỉ sớm',
+      incidents: 'Thiếu 1 nhân viên do nghỉ phép Tết',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'low' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-02-05 12:40'
+    },
+
+    // ── Tháng 1/2026 ──
+    {
+      id: 26, date: '2026-01-28', shiftId: 'T', leaderId: 2,
+      totalOrders: 51, systemRevenue: 4800000, cashSystem: 2400000,
+      cashActual: 2400000, cashDiff: 0, diffReason: '',
+      rating: 4.6, ratingNote: 'Cuối tháng 1, khách đông chuẩn bị Tết',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-01-28 23:15'
+    },
+    {
+      id: 27, date: '2026-01-20', shiftId: 'C', leaderId: 8,
+      totalOrders: 46, systemRevenue: 4300000, cashSystem: 2150000,
+      cashActual: 2100000, cashDiff: -50000, diffReason: 'Thối nhầm tiền khách lúc đông',
+      rating: 4.3, ratingNote: 'Giữa tháng 1 bình thường',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'low' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-01-20 18:20'
+    },
+    {
+      id: 28, date: '2026-01-15', shiftId: 'S', leaderId: 2,
+      totalOrders: 37, systemRevenue: 3450000, cashSystem: 1725000,
+      cashActual: 1725000, cashDiff: 0, diffReason: '',
+      rating: 4.3, ratingNote: 'Ca sáng giữa tháng ổn định',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-01-15 12:45'
+    },
+    {
+      id: 29, date: '2026-01-08', shiftId: 'T', leaderId: 8,
+      totalOrders: 43, systemRevenue: 4050000, cashSystem: 2025000,
+      cashActual: 2025000, cashDiff: 0, diffReason: '',
+      rating: 4.4, ratingNote: 'Đầu năm mới 2026, không khí vui vẻ',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'ok' },
+        { name: 'Sữa đặc', status: 'ok' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-01-08 23:00'
+    },
+    {
+      id: 30, date: '2026-01-02', shiftId: 'C', leaderId: 2,
+      totalOrders: 60, systemRevenue: 5600000, cashSystem: 2800000,
+      cashActual: 2800000, cashDiff: 0, diffReason: '',
+      rating: 4.9, ratingNote: 'Ngày 2/1 - khách kỷ lục đầu năm, team làm rất tốt!',
+      incidents: '',
+      ingredients: [
+        { name: 'Cà phê hạt', status: 'low' },
+        { name: 'Sữa đặc', status: 'low' },
+        { name: 'Đá viên', status: 'ok' },
+        { name: 'Trà túi', status: 'ok' },
+        { name: 'Đường', status: 'ok' },
+      ],
+      status: 'locked', lockedAt: '2026-01-02 18:45'
+    },
   ],
 
   // Revenue data for charts

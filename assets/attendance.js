@@ -163,10 +163,7 @@ const AttendanceModule = {
 
       ${todayRecordHtml}
 
-      <div class="alert alert-info mt-3">
-        <span class="material-icons">info</span>
-        <span>Nếu được Trưởng ca gọi đến sớm, liên hệ Trưởng ca để cộng giờ thủ công vào hệ thống.</span>
-      </div>
+
     </div>
     `;
   },
@@ -526,7 +523,7 @@ const AttendanceModule = {
     return `
     <div class="page-header">
       <h1 class="page-title">Check-in ngoại lệ</h1>
-      <p class="text-muted fs-13 mt-1">Dành cho trường hợp nhân viên không thể tự check-in (hết pin, mất điện thoại...)</p>
+
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px">
@@ -603,10 +600,7 @@ const AttendanceModule = {
           </div>
         </div>
 
-        <div class="alert alert-info mt-3">
-          <span class="material-icons">info</span>
-          <span>Tính năng "Cộng giờ thủ công" áp dụng khi Trưởng ca gọi nhân viên đến sớm tăng cường. Tất cả thao tác đều được ghi log.</span>
-        </div>
+
       </div>
     </div>
     `;
