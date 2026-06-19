@@ -233,7 +233,7 @@ const App = {
         <main class="main-content">
           <header class="topbar">
             <div style="display:flex; align-items:center; gap: 12px;">
-              <button id="mobile-menu-btn" class="mobile-menu-btn" style="background:none; border:none; cursor:pointer; display:none; padding: 4px;">
+              <button id="mobile-menu-btn" class="mobile-menu-btn" style="background:none; border:none; cursor:pointer; padding: 4px;">
                 <span class="material-icons" style="font-size:26px;">menu</span>
               </button>
               <div class="topbar-title" id="topbar-title">${this.getViewTitle(view)}</div>
