@@ -43,8 +43,15 @@ const ShiftsModule = {
     </div>
 
     ${isDeadlinePassed ? `
-
+    <div class="alert alert-danger">
+      <span class="material-icons">block</span>
+      <span>Đã qua hạn đăng ký (Thứ 5 – 20:00). Vui lòng liên hệ Trưởng ca để điều chỉnh.</span>
+    </div>
     ` : `
+    <div class="alert alert-info">
+      <span class="material-icons">info</span>
+      <span>Chọn ca bạn muốn làm cho tuần tới. Bạn có thể chọn nhiều ca trong 1 ngày. Sau khi Trưởng ca duyệt, lịch sẽ được chốt. Hạn chót: <b>20:00 Thứ 5 hàng tuần</b>.</span>
+    </div>
     `}
 
     <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
@@ -357,6 +364,10 @@ const ShiftsModule = {
       </table>
     </div>
 
+    <div class="alert alert-warning">
+      <span class="material-icons">warning</span>
+      <span>Các ô màu vàng cảnh báo ca có <b>dưới 2 người</b>. Trưởng ca vẫn có thể lưu lịch – hệ thống không chặn.</span>
+    </div>
     `;
   },
 
@@ -399,7 +410,10 @@ const ShiftsModule = {
     </div>
 
     ${Object.keys(groupedByUser).length === 0 ? `
-
+      <div class="alert alert-success">
+        <span class="material-icons">check_circle</span>
+        <span>Tất cả đăng ký đã được xử lý.</span>
+      </div>
     ` : Object.entries(groupedByUser).map(([userId, regs]) => {
       const employee = Utils.getUserById(parseInt(userId, 10));
       const weekLabelStr = regs[0]?.week || '';
