@@ -2202,3 +2202,78 @@ background: var(--text-muted);
     gap: 15px;                    /* Thu nhỏ khoảng cách lại một chút cho cân đối */
   }
 }
+
+/* ============================================================
+   MOBILE AFTER LOGIN ONLY
+   Giữ nguyên trang đăng nhập
+   ============================================================ */
+@media (max-width:768px){
+
+  /* Không tác động auth-page/auth-card */
+
+  .main-content{
+    margin-left:0 !important;
+    width:100% !important;
+    min-width:100%;
+  }
+
+  .page-content{
+    padding:12px !important;
+  }
+
+  .topbar{
+    padding:0 12px;
+  }
+
+  .stat-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  .filter-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .filter-row .form-control{
+    width:100%;
+  }
+
+  .btn-group{
+    flex-direction:column;
+  }
+
+  .table-wrapper{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  table{
+    min-width:700px;
+  }
+
+  .schedule-grid{
+    min-width:900px;
+  }
+
+  .pos-layout{
+    grid-template-columns:1fr !important;
+    height:auto;
+  }
+
+  .pos-order{
+    min-height:350px;
+  }
+
+  .staff-grid{
+    grid-template-columns:1fr;
+  }
+
+  .quick-actions{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .modal{
+    width:calc(100vw - 20px);
+    max-width:none;
+  }
+}
